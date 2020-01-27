@@ -1,4 +1,10 @@
 .gradle
+.settings
+.vscode
+.classpath
+.idea
+.project
+/bin/
 /build/
 
 # Ignore Gradle GUI config
@@ -12,3 +18,5 @@ gradle-app.setting
 
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
+/bin/
+/.metadata/
