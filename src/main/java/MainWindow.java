@@ -1,5 +1,6 @@
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -26,6 +27,28 @@ public class MainWindow extends JFrame {
 	public static void main(String[] args) {
 		MainWindow mainWindow = new MainWindow();
 		mainWindow.setVisible(true);
+
+		AirportHangar airportHangar1 = new AirportHangar("Hangar 1", 10 , mainWindow.snapshot1Label);
+		AirportHangar airportHangar2 = new AirportHangar("Hangar 2", 10, mainWindow.snapshot2Label);
+		AirportHangar airportHangar3 = new AirportHangar("Hangar 3", 10, mainWindow.snapshot3Label);
+
+		ArrayList<AirportHangar> airportHangars = new ArrayList<>();
+		airportHangars.add(airportHangar1);
+		airportHangars.add(airportHangar2);
+		airportHangars.add(airportHangar3);
+
+		ChannelMonitor channelMonitor = new ChannelMonitor(airportHangars, mainWindow.historyListModel);
+
+		Thread hangThread1 = new Thread(airportHangar1);
+		Thread hangThread2 = new Thread(airportHangar2);
+		Thread hangThread3 = new Thread(airportHangar3);
+		Thread channelMoitorThread = new Thread(channelMonitor);
+
+		hangThread1.start();
+		hangThread2.start();
+		hangThread3.start();
+
+		channelMoitorThread.start();
 	}
 
 	public MainWindow() {
