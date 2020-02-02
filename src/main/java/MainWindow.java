@@ -1,6 +1,8 @@
 import java.awt.BorderLayout;
 import java.awt.GridLayout;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -28,16 +30,21 @@ public class MainWindow extends JFrame {
 		MainWindow mainWindow = new MainWindow();
 		mainWindow.setVisible(true);
 
-		AirportHangar airportHangar1 = new AirportHangar("Hangar 1", 10 , mainWindow.snapshot1Label);
-		AirportHangar airportHangar2 = new AirportHangar("Hangar 2", 10, mainWindow.snapshot2Label);
-		AirportHangar airportHangar3 = new AirportHangar("Hangar 3", 10, mainWindow.snapshot3Label);
+		Map<String, Integer> clientMap = new HashMap<>();
+		clientMap.put("1", 8001);
+		clientMap.put("2", 8002);
+		clientMap.put("3", 8003);
+
+		AirportHangar airportHangar1 = new AirportHangar("1", 10, 8001, clientMap, mainWindow.snapshot1Label, mainWindow.historyListModel);
+		AirportHangar airportHangar2 = new AirportHangar("2", 10, 8002, clientMap, mainWindow.snapshot2Label, mainWindow.historyListModel);
+		AirportHangar airportHangar3 = new AirportHangar("3", 10, 8003, clientMap, mainWindow.snapshot3Label, mainWindow.historyListModel);
 
 		ArrayList<AirportHangar> airportHangars = new ArrayList<>();
 		airportHangars.add(airportHangar1);
 		airportHangars.add(airportHangar2);
 		airportHangars.add(airportHangar3);
 
-		ChannelMonitor channelMonitor = new ChannelMonitor(airportHangars, mainWindow.historyListModel);
+		ChannelMonitor channelMonitor = new ChannelMonitor(airportHangars);
 
 		Thread hangThread1 = new Thread(airportHangar1);
 		Thread hangThread2 = new Thread(airportHangar2);

@@ -1,51 +1,40 @@
 import java.util.ArrayList;
 import java.util.Random;
 
-import javax.swing.DefaultListModel;
-
 public class ChannelMonitor implements Runnable {
 
     private ArrayList<AirportHangar> airportHangars;
-    private DefaultListModel<String> historyListModel;
     private Random rand;
 
-    private int hangarCount;
-
-    public ChannelMonitor(ArrayList<AirportHangar> airportHangars, DefaultListModel<String> historyListModel) {
+    public ChannelMonitor(ArrayList<AirportHangar> airportHangars) {
         this.airportHangars = airportHangars;
-        this.historyListModel = historyListModel;
-        this.hangarCount = airportHangars.size();
         rand = new Random();
     }
 
-    private int getOutHanger() {
-        int outHangar = rand.nextInt(this.hangarCount);
-        while(this.airportHangars.get(outHangar).getOutputChannel().size() == 0) {
-            outHangar = rand.nextInt(this.hangarCount);
-        }
-        return outHangar;
-    }
+    HangarClient getClientToDispatch() {
+        HangarClient hangarClient = null;
+        AirportHangar airportHangar = null;
+        
+        do {
+            int hangar = rand.nextInt(this.airportHangars.size());
+            airportHangar = this.airportHangars.get(hangar);
+        } while(airportHangar.areAllChannelsEmpty());
 
-    private int getInHanger(int outHangar) {
-        int inHangar = rand.nextInt(this.hangarCount);
-        while(inHangar == outHangar) {
-            inHangar = rand.nextInt(this.hangarCount);
-        }
-        return inHangar;
+        do {
+            int client = rand.nextInt(airportHangar.hangarClients.size());
+            hangarClient = airportHangar.hangarClients.get(client);
+        } while(hangarClient.channelBuffer.isEmpty());
+
+        return hangarClient;
     }
 
     @Override
     public void run() {
         
         while(true) {
-            int outHangar = getOutHanger();
-            int outPlaneCount = this.airportHangars.get(outHangar).getOutputChannel().poll();
 
-            int inHangar = getInHanger(outHangar);
-            this.airportHangars.get(inHangar).getInputChannel().offer(outPlaneCount);
-            String displayText = "Transfer: H" + (outHangar+1) + " -> H" + (inHangar+1) + " (" + outPlaneCount + ")";
-            System.out.println(displayText);
-            historyListModel.addElement(displayText);
+            HangarClient hangarClient = getClientToDispatch();
+            hangarClient.sendMessage();
 
             int timeInterval = 1 + rand.nextInt(3);
             try {
