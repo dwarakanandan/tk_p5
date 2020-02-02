@@ -14,6 +14,8 @@ import javax.swing.JScrollPane;
 
 public class MainWindow extends JFrame {
 
+	private static final long serialVersionUID = 1L;
+	
 	private DefaultListModel<String> historyListModel;
 	private JList<String> historyList;
 
