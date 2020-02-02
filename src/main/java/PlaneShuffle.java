@@ -39,5 +39,6 @@ public class PlaneShuffle implements Runnable {
         int receiverHanger = rand.nextInt(this.airportHangar.hangarClients.size());
         this.airportHangar.hangarClients.get(receiverHanger).channelBuffer.offer(message);
         this.airportHangar.setAirplaneCount(this.airportHangar.getAirplaneCount() - planeCount);
+        System.out.println("[H-"+this.airportHangar.hangarName+"] Queueing message from H"+this.airportHangar.hangarName + " -> H"+(receiverHanger+1));
     }
 }

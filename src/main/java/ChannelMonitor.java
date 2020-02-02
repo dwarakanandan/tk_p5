@@ -14,7 +14,7 @@ public class ChannelMonitor implements Runnable {
     HangarClient getClientToDispatch() {
         HangarClient hangarClient = null;
         AirportHangar airportHangar = null;
-        
+
         do {
             int hangar = rand.nextInt(this.airportHangars.size());
             airportHangar = this.airportHangars.get(hangar);
@@ -34,6 +34,7 @@ public class ChannelMonitor implements Runnable {
         while(true) {
 
             HangarClient hangarClient = getClientToDispatch();
+            System.out.println("[Monitor] Dispatching message from H" + hangarClient.airportHangar.hangarName);
             hangarClient.sendMessage();
 
             int timeInterval = 1 + rand.nextInt(3);

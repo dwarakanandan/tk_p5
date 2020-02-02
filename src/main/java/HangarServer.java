@@ -25,9 +25,7 @@ public class HangarServer implements Runnable {
                 ObjectInputStream oos = new ObjectInputStream(baos);
                 Message message = (Message)oos.readObject();
                 this.airportHangar.setAirplaneCount(this.airportHangar.getAirplaneCount() + message.getAirplaneCount());
-
-                String displayText = "Hanger " + this.airportHangar.hangarName + " (#" + this.airportHangar.getAirplaneCount() + ")";
-                this.airportHangar.jLabel.setText(displayText);
+                System.out.println("[H-"+this.airportHangar.hangarName+"] got " + message.getAirplaneCount());
             }
 
             serverSocket.close();
