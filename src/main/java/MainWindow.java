@@ -3,6 +3,7 @@ import java.awt.GridLayout;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import javax.swing.DefaultListModel;
 import javax.swing.JButton;
@@ -27,6 +28,8 @@ public class MainWindow extends JFrame {
 
 	private JLabel snapshot3Label;
 	private JButton snapshot3Button;
+
+	ConcurrentLinkedQueue<String> historyQueue = new ConcurrentLinkedQueue<>();
 	
 	public static void main(String[] args) {
 		MainWindow mainWindow = new MainWindow();
@@ -37,9 +40,9 @@ public class MainWindow extends JFrame {
 		clientMap.put("2", 8002);
 		clientMap.put("3", 8003);
 
-		AirportHangar airportHangar1 = new AirportHangar("1", 10, 8001, clientMap, mainWindow.snapshot1Label, mainWindow.historyListModel);
-		AirportHangar airportHangar2 = new AirportHangar("2", 10, 8002, clientMap, mainWindow.snapshot2Label, mainWindow.historyListModel);
-		AirportHangar airportHangar3 = new AirportHangar("3", 10, 8003, clientMap, mainWindow.snapshot3Label, mainWindow.historyListModel);
+		AirportHangar airportHangar1 = new AirportHangar("1", 10, 8001, clientMap, mainWindow.historyQueue);
+		AirportHangar airportHangar2 = new AirportHangar("2", 10, 8002, clientMap, mainWindow.historyQueue);
+		AirportHangar airportHangar3 = new AirportHangar("3", 10, 8003, clientMap, mainWindow.historyQueue);
 
 		mainWindow.snapshot1Button.addActionListener(airportHangar1);
 		mainWindow.snapshot2Button.addActionListener(airportHangar2);
@@ -67,7 +70,9 @@ public class MainWindow extends JFrame {
 			mainWindow.snapshot1Label.setText("Hangar 1 (#" + airportHangar1.getAirplaneCount() + ")");
 			mainWindow.snapshot2Label.setText("Hangar 2 (#" + airportHangar2.getAirplaneCount() + ")");
 			mainWindow.snapshot3Label.setText("Hangar 3 (#" + airportHangar3.getAirplaneCount() + ")");
-
+			while(! mainWindow.historyQueue.isEmpty()) {
+				mainWindow.historyListModel.addElement(mainWindow.historyQueue.poll());
+			}
 			try {
 				Thread.sleep(500);
 			} catch (InterruptedException e) {

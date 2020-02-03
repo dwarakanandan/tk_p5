@@ -21,17 +21,15 @@ public class AirportHangar implements Runnable, ActionListener {
     HashMap<Integer, Snapshot> runningSnapshots = new HashMap<>();
     Random rand = new Random();
     ConcurrentLinkedQueue<Integer> snapshotInitiationRequests = new ConcurrentLinkedQueue<>();
+    ConcurrentLinkedQueue<String> historyQueue;
 
-    JLabel jLabel;
-    DefaultListModel<String> historyListModel;
 
-    public AirportHangar(String hangarName, int airplaneCount, int serverPort, Map<String, Integer> clientMap, JLabel jLabel, DefaultListModel<String> historyListModel) {
+    public AirportHangar(String hangarName, int airplaneCount, int serverPort, Map<String, Integer> clientMap, ConcurrentLinkedQueue<String> historyQueue) {
         this.hangarName = hangarName;
         this.airplaneCount = new AtomicInteger(airplaneCount);
         this.serverPort = serverPort;
         this.clientMap = clientMap;
-        this.jLabel = jLabel;
-        this.historyListModel = historyListModel;
+        this.historyQueue = historyQueue;
         
         for (String client : this.clientMap.keySet()) {
             if (! this.hangarName.equals(client)) {
@@ -74,7 +72,7 @@ public class AirportHangar implements Runnable, ActionListener {
         int snapshotId = rand.nextInt(10000);
         String displayText = "Starting [Snapshot-" + snapshotId + "] on [H-" + hangarName + "]";
         System.out.println(displayText);
-        historyListModel.addElement(displayText);
+        historyQueue.offer(displayText);
 
         snapshotInitiationRequests.offer(snapshotId);
     }

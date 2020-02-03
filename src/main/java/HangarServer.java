@@ -33,7 +33,7 @@ public class HangarServer implements Runnable {
                     case TRANSFER:
                         displayText = "Transfer: H" + message.getSenderName() + " -> H" + this.airportHangar.hangarName + " (" + message.getAirplaneCount() + ")";
                         //System.out.println(displayText);
-                        this.airportHangar.historyListModel.addElement(displayText);
+                        this.airportHangar.historyQueue.offer(displayText);
 
                         recordMessage(message);
                         this.airportHangar.increaseAirplaneCount(message.getAirplaneCount());
@@ -41,7 +41,7 @@ public class HangarServer implements Runnable {
                     case MARK:
                         displayText = "Mark: H" + message.getSenderName() + " -> H" + this.airportHangar.hangarName + " (ID:" + message.getSnapshotId() + ")";
                         System.out.println(displayText);
-                        this.airportHangar.historyListModel.addElement(displayText);
+                        this.airportHangar.historyQueue.offer(displayText);
 
                         // If the snapshot is already running, then stop recording and send final state if it is ready
                         // If it is not started yet, start a new snapshot and send markers to all peers
@@ -61,7 +61,7 @@ public class HangarServer implements Runnable {
                     case FINAL_STATE:
                         displayText = "Final State: H" + message.getSenderName() + " -> H" + this.airportHangar.hangarName + " (ID:" + message.getSnapshotId() + ")";
                         System.out.println(displayText);
-                        this.airportHangar.historyListModel.addElement(displayText);
+                        this.airportHangar.historyQueue.offer(displayText);
 
                         // Merge the final state and report it if all final states are received
                         Snapshot snapshot = airportHangar.runningSnapshots.get(message.getSnapshotId());
@@ -69,9 +69,10 @@ public class HangarServer implements Runnable {
                         if(snapshot.allFinalStatesReceived()){
                             ArrayList<String> states = snapshot.asString();
                             for (String state : states) {
-                                airportHangar.historyListModel.addElement(state);
+                                airportHangar.historyQueue.offer(state);
                                 System.out.println(state);
                             }
+                            System.out.println("********* SNAPSHOT_END ********\n\n");
                         }
                         break;
                 }
