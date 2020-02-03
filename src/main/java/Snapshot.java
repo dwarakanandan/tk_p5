@@ -1,5 +1,6 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -51,27 +52,31 @@ public class Snapshot {
     public boolean checkAllFinished(){
         System.out.println("H" + hangar.hangarName + " checking finished");
         for(Boolean finished : finishedRecording.values()){
-            System.out.println(finished);
+            //System.out.println(finished);
             if(!finished) return false;
         }
         return true;
     }
 
-    public String toString(){
+    public ArrayList<String> asString(){
         int totalPlanes = 0;
+        ArrayList<String> stringArray = new ArrayList<>();
         String header = "[Snapshot-" + snapshotId + "]: ";
-        String finalStatesStr = "Final states: ";
+        String finalStatesStr = "Hanger states: | ";
         for(String hangar : finalStates.keySet()){
             totalPlanes += finalStates.get(hangar);
-            finalStatesStr += "H" + hangar + ": " + finalStates.get(hangar) + ", ";
+            finalStatesStr += "H" + hangar + ": " + finalStates.get(hangar) + " | ";
         }
-        String recordedMesssagesStr = "Recorded messages: ";
+        String recordedMesssagesStr = "Channel states: | ";
         for(Message message : recordedMessages){
-            recordedMesssagesStr += "H" + message.getSenderName() + " -> H" + hangar.hangarName + " (" + message.getAirplaneCount() + "), ";
+            recordedMesssagesStr += "H" + message.getSenderName() + " -> H" + hangar.hangarName + " (" + message.getAirplaneCount() + ") | ";
             totalPlanes += message.getAirplaneCount();
         }
+        stringArray.add(header + finalStatesStr);
+        stringArray.add(header + recordedMesssagesStr);
+        stringArray.add(header + "Total Planes in System: "+totalPlanes);
 
-        return header + "\n" + finalStatesStr + "\n" + recordedMesssagesStr + "\n Total Planes: " + totalPlanes;
+        return stringArray;
     }
 
 }

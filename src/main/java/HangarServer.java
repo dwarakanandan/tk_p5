@@ -2,6 +2,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ObjectInputStream;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
+import java.util.ArrayList;
 
 public class HangarServer implements Runnable {
 
@@ -31,7 +32,7 @@ public class HangarServer implements Runnable {
                 switch(message.getType()){
                     case TRANSFER:
                         displayText = "Transfer: H" + message.getSenderName() + " -> H" + this.airportHangar.hangarName + " (" + message.getAirplaneCount() + ")";
-                        System.out.println(displayText);
+                        //System.out.println(displayText);
                         this.airportHangar.historyListModel.addElement(displayText);
 
                         recordMessage(message);
@@ -66,9 +67,11 @@ public class HangarServer implements Runnable {
                         Snapshot snapshot = airportHangar.runningSnapshots.get(message.getSnapshotId());
                         snapshot.mergeState(message.getSenderName(), message.getFinalState(), message.getRecordedMessages());
                         if(snapshot.allFinalStatesReceived()){
-                            String state = snapshot.toString();
-                            airportHangar.historyListModel.addElement(state);
-                            System.out.println(state);
+                            ArrayList<String> states = snapshot.asString();
+                            for (String state : states) {
+                                airportHangar.historyListModel.addElement(state);
+                                System.out.println(state);
+                            }
                         }
                         break;
                 }
