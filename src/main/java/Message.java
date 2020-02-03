@@ -4,12 +4,10 @@ public class Message implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    private String senderName;
     private int airplaneCount;
     private boolean isMarkerMessage;
 
-    public Message(String senderName, int airplaneCount, boolean isMarkerMessage) {
-        this.senderName = senderName;
+    public Message(int airplaneCount, boolean isMarkerMessage) {
         this.airplaneCount = airplaneCount;
         this.isMarkerMessage = isMarkerMessage;
     }

@@ -13,7 +13,7 @@ public class PlaneShuffle implements Runnable {
     @Override
     public void run() {
         
-        int timeInterval = 1 + rand.nextInt(3);
+        int timeInterval = 1 + rand.nextInt(4);
         while (true) {
             shufflePlanes();
             try {
@@ -21,17 +21,24 @@ public class PlaneShuffle implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
-            timeInterval = 1 + rand.nextInt(4);
         }
     }
 
     private void shufflePlanes() {
-
-        HangarClient receiverClient = hangarClients.get(rand.nextInt(this.hangarClients.size()));
-        Message message = airportHangar.outgoingMessageQueues.get(receiverClient.serverName).poll();
-        if(message){
-            this.airportHangar.hangarClients.get(receiverHanger).channelBuffer.offer(message);
-            System.out.println("[H-"+this.airportHangar.hangarName+"] Queueing message from H"+this.airportHangar.hangarName + " -> H"+(receiverHanger+1));
+        if (this.airportHangar.getAirplaneCount() == 0) {
+            return;
         }
+
+        int planeCount = 1 + rand.nextInt(5);
+
+        if (planeCount > this.airportHangar.getAirplaneCount()) {
+            planeCount = this.airportHangar.getAirplaneCount();
+        }
+
+        Message message = new Message(planeCount, false);
+        int receiverHanger = rand.nextInt(this.airportHangar.hangarClients.size());
+        this.airportHangar.hangarClients.get(receiverHanger).channelBuffer.offer(message);
+        this.airportHangar.setAirplaneCount(this.airportHangar.getAirplaneCount() - planeCount);
+        System.out.println("[H-"+this.airportHangar.hangarName+"] Queueing message from H"+this.airportHangar.hangarName + " -> H"+(receiverHanger+1));
     }
 }
