@@ -21,6 +21,7 @@ public class PlaneShuffle implements Runnable {
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+            timeInterval = 1 + rand.nextInt(4);
         }
     }
 
@@ -35,10 +36,11 @@ public class PlaneShuffle implements Runnable {
             planeCount = this.airportHangar.getAirplaneCount();
         }
 
-        Message message = new Message(planeCount, false);
-        int receiverHanger = rand.nextInt(this.airportHangar.hangarClients.size());
-        this.airportHangar.hangarClients.get(receiverHanger).channelBuffer.offer(message);
-        this.airportHangar.setAirplaneCount(this.airportHangar.getAirplaneCount() - planeCount);
-        System.out.println("[H-"+this.airportHangar.hangarName+"] Queueing message from H"+this.airportHangar.hangarName + " -> H"+(receiverHanger+1));
+        int receiverHangarNum = rand.nextInt(this.airportHangar.hangarClients.size());
+        HangarClient receiverHanger = this.airportHangar.hangarClients.get(receiverHangarNum);
+        Message message = new Message(airportHangar.hangarName, planeCount);
+        receiverHanger.channelBuffer.offer(message);
+        this.airportHangar.increaseAirplaneCount(-planeCount);
+        System.out.println("[H-"+this.airportHangar.hangarName+"] Queueing TRANSFER message from H"+this.airportHangar.hangarName + " -> H"+(receiverHangarNum+1));
     }
 }

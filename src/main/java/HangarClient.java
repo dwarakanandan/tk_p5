@@ -32,9 +32,6 @@ public class HangarClient {
                 InetAddress client = InetAddress.getLocalHost();
                 DatagramPacket packet = new DatagramPacket(data, data.length, client, port);
                 socket.send(packet);
-                String displayText = "Transfer: H" + this.airportHangar.hangarName + " -> H" + serverName + " (" + message.getAirplaneCount() + ")";
-                System.out.println(displayText);
-                this.airportHangar.historyListModel.addElement(displayText);
                 socket.close();
             } catch (Exception e) {
                 e.printStackTrace();

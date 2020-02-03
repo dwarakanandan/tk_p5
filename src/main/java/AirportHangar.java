@@ -1,23 +1,33 @@
 import javax.swing.DefaultListModel;
 import javax.swing.JLabel;
 
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Random;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.atomic.AtomicInteger;
 
-public class AirportHangar implements Runnable {
+public class AirportHangar implements Runnable, ActionListener {
 
-    private int airplaneCount;
+    private AtomicInteger airplaneCount;
     String hangarName;
     int serverPort;
     Map<String, Integer> clientMap;
     ArrayList<HangarClient> hangarClients = new ArrayList<>();
+    HashMap<String, HangarClient> hangarClientMap = new HashMap<>();
+    HashMap<Integer, Snapshot> runningSnapshots = new HashMap<>();
+    Random rand = new Random();
+    ConcurrentLinkedQueue<Integer> snapshotInitiationRequests = new ConcurrentLinkedQueue<>();
 
     JLabel jLabel;
     DefaultListModel<String> historyListModel;
 
     public AirportHangar(String hangarName, int airplaneCount, int serverPort, Map<String, Integer> clientMap, JLabel jLabel, DefaultListModel<String> historyListModel) {
         this.hangarName = hangarName;
-        this.airplaneCount = airplaneCount;
+        this.airplaneCount = new AtomicInteger(airplaneCount);
         this.serverPort = serverPort;
         this.clientMap = clientMap;
         this.jLabel = jLabel;
@@ -27,6 +37,7 @@ public class AirportHangar implements Runnable {
             if (! this.hangarName.equals(client)) {
                 HangarClient hangarClient = new HangarClient(this, this.clientMap.get(client), client);
                 hangarClients.add(hangarClient);
+                hangarClientMap.put(client, hangarClient);
             }
         }
     }
@@ -47,11 +58,30 @@ public class AirportHangar implements Runnable {
     }
 
     public int getAirplaneCount() {
-        return airplaneCount;
+        return airplaneCount.get();
     }
 
     public void setAirplaneCount(int planeCount) {
-        this.airplaneCount = planeCount;
+        this.airplaneCount.set(planeCount);
     }
 
+    public void increaseAirplaneCount(int amount){
+        airplaneCount.addAndGet(amount);
+    }
+
+    // Generate a random snapshot ID and place it in the snapshot queue
+    public void startSnapshot(){
+        int snapshotId = rand.nextInt(10000);
+        String displayText = "Starting [Snapshot-" + snapshotId + "] on [H-" + hangarName + "]";
+        System.out.println(displayText);
+        historyListModel.addElement(displayText);
+
+        snapshotInitiationRequests.offer(snapshotId);
+    }
+
+
+    @Override
+    public void actionPerformed(ActionEvent actionEvent) {
+        startSnapshot();
+    }
 }

@@ -15,7 +15,7 @@ import javax.swing.JScrollPane;
 public class MainWindow extends JFrame {
 
 	private static final long serialVersionUID = 1L;
-	
+
 	private DefaultListModel<String> historyListModel;
 	private JList<String> historyList;
 
@@ -41,6 +41,10 @@ public class MainWindow extends JFrame {
 		AirportHangar airportHangar2 = new AirportHangar("2", 10, 8002, clientMap, mainWindow.snapshot2Label, mainWindow.historyListModel);
 		AirportHangar airportHangar3 = new AirportHangar("3", 10, 8003, clientMap, mainWindow.snapshot3Label, mainWindow.historyListModel);
 
+		mainWindow.snapshot1Button.addActionListener(airportHangar1);
+		mainWindow.snapshot2Button.addActionListener(airportHangar2);
+		mainWindow.snapshot3Button.addActionListener(airportHangar3);
+
 		ArrayList<AirportHangar> airportHangars = new ArrayList<>();
 		airportHangars.add(airportHangar1);
 		airportHangars.add(airportHangar2);
@@ -58,6 +62,18 @@ public class MainWindow extends JFrame {
 		hangThread3.start();
 
 		channelMoitorThread.start();
+
+		while(true){
+			mainWindow.snapshot1Label.setText("Hangar 1 (#" + airportHangar1.getAirplaneCount() + ")");
+			mainWindow.snapshot2Label.setText("Hangar 2 (#" + airportHangar2.getAirplaneCount() + ")");
+			mainWindow.snapshot3Label.setText("Hangar 3 (#" + airportHangar3.getAirplaneCount() + ")");
+
+			try {
+				Thread.sleep(500);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	public MainWindow() {
@@ -80,7 +96,6 @@ public class MainWindow extends JFrame {
 		// snapshot 1
 		snapshot1Label = new JLabel("Hangar 1 (#0)");
 		snapshot1Button = new JButton("Snapshot");
-		snapshot1Button.addActionListener(x -> snapshot(1));
 
 		JPanel snapshot1 = new JPanel();
 		snapshot1.setLayout(new GridLayout(2, 1));
@@ -91,7 +106,6 @@ public class MainWindow extends JFrame {
 		// snapshot 2
 		snapshot2Label = new JLabel("Hangar 2 (#0)");
 		snapshot2Button = new JButton("Snapshot");
-		snapshot2Button.addActionListener(x -> snapshot(1));
 
 		JPanel snapshot2 = new JPanel();
 		snapshot2.setLayout(new GridLayout(2, 1));
@@ -102,7 +116,6 @@ public class MainWindow extends JFrame {
 		// snapshot 3
 		snapshot3Label = new JLabel("Hangar 3 (#0)");
 		snapshot3Button = new JButton("Snapshot");
-		snapshot3Button.addActionListener(x -> snapshot(1));
 
 		JPanel snapshot3 = new JPanel();
 		snapshot3.setLayout(new GridLayout(2, 1));
@@ -111,11 +124,6 @@ public class MainWindow extends JFrame {
 		sidePanel.add(snapshot3);
 
 		add(sidePanel, BorderLayout.EAST);
-	}
-
-	private void snapshot(int snapshot) {
-		// TODO
-		historyListModel.addElement("Snapshot ...");
 	}
 
 }
